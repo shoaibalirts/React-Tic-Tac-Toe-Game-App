@@ -12,8 +12,7 @@ export default function Player({ name, symbol }) {
   };
   console.log(isEditing);
   const inputHandle = (event) => {
-    name = event.target.value;
-    setNewName(name);
+    setNewName(event.target.value);
   };
 
   return (
@@ -34,10 +33,7 @@ export default function Player({ name, symbol }) {
 
         <span className="player-symbol">{symbol}</span>
       </span>
-      {isEditing && <button onClick={handleSaveClick}>Save</button>}
-      {isEditing === false ? (
-        <button onClick={handleEditClick}>Edit</button>
-      ) : null}
+      <button onClick={handleEditClick}>{isEditing ? "Save" : "Edit"}</button>
     </li>
   );
 }
