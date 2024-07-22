@@ -10,7 +10,7 @@ export default function Player({ name, symbol }) {
   const handleSaveClick = () => {
     setIsEditing(false);
   };
-  console.log(isEditing);
+  // console.log(isEditing);
   const inputHandle = (event) => {
     setNewName(event.target.value);
   };
