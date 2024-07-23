@@ -2,20 +2,25 @@ import { useState } from "react";
 import Player from "./components/Player";
 import GameBoard from "./components/GameBoard";
 import Log from "./components/Log";
+function deriveActivePlayer(gameTurns) {
+  let currentPlayer = "X";
+  if (gameTurns.length > 0 && gameTurns[0].player === "X") {
+    currentPlayer = "O";
+  }
+  return currentPlayer;
+}
 function App() {
   const [gameTurns, setGameTurns] = useState([]); // array of objects
   // clickbutton are handled by GameBoard
   // it should be lifted up to App
   // then, pass it to Log for displaying grid value
-  const [activePlayer, setActivePlayer] = useState("X");
+  // const [activePlayer, setActivePlayer] = useState("X");
+  const activePlayer = deriveActivePlayer(gameTurns);
   function handleSelectSquare(rowIndex, colIndex) {
     // handleSelectSquare is used for updating activePlayer state as well as updating gameTurns objects state
-    setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
+    // setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
     setGameTurns((prevTurns) => {
-      let currentPlayer = "X";
-      if (prevTurns.length > 0 && prevTurns[0].player === "X") {
-        currentPlayer = "O";
-      }
+      const currentPlayer = deriveActivePlayer(prevTurns);
 
       const updatedTurns = [
         {
