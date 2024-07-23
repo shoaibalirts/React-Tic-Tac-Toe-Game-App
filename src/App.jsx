@@ -2,6 +2,7 @@ import { useState } from "react";
 import Player from "./components/Player";
 import GameBoard from "./components/GameBoard";
 import Log from "./components/Log";
+import GameOver from "./components/GameOver.jsx";
 import { WINNING_COMBINATIONS } from "./components/WinningCombinations.jsx";
 
 const initialGameBoard = [
@@ -19,14 +20,23 @@ function deriveActivePlayer(gameTurns) {
 }
 function App() {
   const [gameTurns, setGameTurns] = useState([]); // array of objects
+
   // clickbutton are handled by GameBoard
   // it should be lifted up to App
   // then, pass it to Log for displaying grid value
   // const [activePlayer, setActivePlayer] = useState("X");
   const activePlayer = deriveActivePlayer(gameTurns);
 
-  let gameBoard = initialGameBoard; // gameBoard is a derived state from gameTurns state managed in App component
+  let gameBoard = [...initialGameBoard.map((array) => [...array])]; // gameBoard is a derived state from gameTurns state managed in App component
+  // gameBoard is dependent on initialGameBoard which is a full of null arrays
+  // whenever gameBoard[row][col]=player, then i am changing also to initialGameBoard, because
+  // array or object are reference to the same memory location. gameBoard and initialGameBoard
+  // are pointing to same memory location
+  // we need to have a copy of that array therefore we use [...initialGameBoard]
+  // We also need inner array copy so we use map function and copy the
+  // inner array using [...array]
   // gameBoard is derived from turns state, which is managed in App.jsx
+
   for (const turn of gameTurns) {
     const { square, player } = turn;
     const { row, col } = square;
@@ -49,6 +59,7 @@ function App() {
       winner = firstSquareSymbol;
     }
   }
+  const hasDraw = gameTurns.length === 9 && !winner;
   function handleSelectSquare(rowIndex, colIndex) {
     // handleSelectSquare is used for updating activePlayer state as well as updating gameTurns objects state
     // setActivePlayer((curActivePlayer) => (curActivePlayer === "X" ? "O" : "X"));
@@ -66,6 +77,9 @@ function App() {
     });
   }
   console.log(gameTurns);
+  function handleRestart() {
+    setGameTurns([]);
+  }
   return (
     <main>
       <div id="game-container">
@@ -73,7 +87,9 @@ function App() {
           <Player name="Player 1" symbol="X" isActive={activePlayer === "X"} />
           <Player name="Player 2" symbol="O" isActive={activePlayer === "O"} />
         </ol>
-        {winner && <p>You won, {winner}!</p>}
+        {(winner || hasDraw) && (
+          <GameOver winner={winner} onRestart={handleRestart} />
+        )}
         <GameBoard onSelectSquare={handleSelectSquare} board={gameBoard} />
       </div>
       <Log turns={gameTurns} />
